@@ -25,13 +25,16 @@ import javax.swing.tree.DefaultTreeModel;
 public class AdminControlPanel extends JFrame {
 
 	private JPanel contentPane;
+	//Singleton pattern
 	private static AdminControlPanel instance = new AdminControlPanel();
 	private JTree treeView;
+	//keeps track of the total number of Users
 	private int totalUsers;
+	//keeps track of the total number of Groups
 	private int totalGroups;
 
 	/**
-	 * Create the frame.
+	 * Create the frame and initializes all components in the frame.
 	 */
 	private AdminControlPanel() {
 		this.setTitle("Admin Control Panel");
@@ -67,11 +70,13 @@ public class AdminControlPanel extends JFrame {
 		//Code for buttons that add users to the JTree
 		JButton addUserBtn = new JButton("Add User");
 		addUserBtn.addActionListener(new ActionListener() {
+			//Creates a new user and adds it to the Tree
 			public void actionPerformed(ActionEvent arg0) {
 				if(!userNameArea.getText().trim().equals(""))
 				{
 					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
 					DefaultMutableTreeNode newUser = new DefaultMutableTreeNode(new User(userNameArea.getText()));
+					//Can't add users to other users
 					if(selectedNode != null && (!(selectedNode.getUserObject() instanceof User) || selectedNode.getUserObject().toString().equals("Root")))
 					{
 						model.insertNodeInto(newUser, selectedNode, selectedNode.getChildCount());
@@ -91,9 +96,10 @@ public class AdminControlPanel extends JFrame {
 		addUserBtn.setBounds(478, 31, 172, 40);
 		contentPane.add(addUserBtn);
 		
-		//Code for buttons that add userGroups to the Jtree
+		//Code for buttons that add userGroups to the JTree
 		JButton addGroupBtn = new JButton("Add Group");
 		addGroupBtn.addActionListener(new ActionListener() {
+			//Create a new userGroup and add it to the Tree
 			public void actionPerformed(ActionEvent e) {
 				if(!groupNameArea.getText().trim().equals(""))
 				{
@@ -117,6 +123,7 @@ public class AdminControlPanel extends JFrame {
 		//Code to open the userView window
 		JButton userViewBtn = new JButton("Open User View");
 		userViewBtn.addActionListener(new ActionListener() {
+			//Opens an instance of a UserWindow for the selected User.
 			public void actionPerformed(ActionEvent e) {
 				DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
 				if(selectedNode.getUserObject() instanceof User )
@@ -138,7 +145,7 @@ public class AdminControlPanel extends JFrame {
 		userViewBtn.setBounds(250, 179, 424, 65);
 		contentPane.add(userViewBtn);
 		
-		//code to calculate total users
+		//Button to display total number of users
 		JButton userTotalBtn = new JButton("Show User Total");
 		userTotalBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -148,7 +155,7 @@ public class AdminControlPanel extends JFrame {
 		userTotalBtn.setBounds(250, 304, 204, 55);
 		contentPane.add(userTotalBtn);	
 		
-		//code to show total number of groups
+		//Button to display total number of groups
 		JButton groupTotalBtn = new JButton("Show Group Total");
 		groupTotalBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -164,6 +171,7 @@ public class AdminControlPanel extends JFrame {
 					public void actionPerformed(ActionEvent e) {
 						TreeVisitor visit = new TreeVisitor();
 						DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeView.getModel().getRoot();
+						//Loop through the tree and visit each node with a visitor
 						for(Enumeration en = root.breadthFirstEnumeration(); en.hasMoreElements();)
 						{
 							DefaultMutableTreeNode node = (DefaultMutableTreeNode) en.nextElement();
@@ -181,6 +189,7 @@ public class AdminControlPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				TreeVisitor visit = new TreeVisitor();
 				DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeView.getModel().getRoot();
+				//Uses visitor design pattern to check positive messages in each user
 				for(Enumeration en = root.breadthFirstEnumeration(); en.hasMoreElements();)
 				{
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) en.nextElement();
@@ -195,11 +204,20 @@ public class AdminControlPanel extends JFrame {
 		
 	}
 	
+	/**
+	 * @return The tree that contains all users
+	 */
 	public JTree getTree()
 	{
 		return treeView;
 	}
 	
+	/**
+	 * Finds a User in the tree by ssearching for their ID.
+	 * 
+	 * @param userID The user that is being searched for
+	 * @return The user with the inputed UserID. Returns null if the user is not found
+	 */
 	public User findUser(String userID)
 	{
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeView.getModel().getRoot();
@@ -219,6 +237,10 @@ public class AdminControlPanel extends JFrame {
 		return null;
 	}
 	
+	/**
+	 * Returns a static instance of AdminControlPanel.
+	 * @return a static instance of AdminControlPanel
+	 */
 	public static AdminControlPanel getInstance()
 	{
 		return instance;

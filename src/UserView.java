@@ -103,6 +103,11 @@ public class UserView extends JFrame {
 		contentPane.add(refreshButton);
 	}
 	
+	/**
+	 * @param currentUser the user that is being viewed
+	 * @param parent the original panel that opened this view
+	 * @return a static instance of this panel
+	 */
 	public static UserView getInstance(User currentUser, AdminControlPanel parent)
 	{
 		instance = new UserView(currentUser, parent);

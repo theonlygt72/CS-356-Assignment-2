@@ -12,8 +12,7 @@ public class UserGroup implements TreeComponent {
 
 	@Override
 	public void addMember(User member) {
-		// TODO Auto-generated method stub
-		
+		members.add(member);
 	}
 
 

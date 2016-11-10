@@ -1,10 +1,16 @@
 
 public class TreeVisitor implements TreeComponentVisitor {
 	
+	//total number of tweets among all users
 	private int totalTweets;
+	//total number of words containing happy or positive among all users
 	private int positiveWords;
+	//percentage of positive words over the the total amount of words
 	private double posPercent;
 	
+	/**
+	 * Initializes all private variables and sets them as 0;
+	 */
 	public TreeVisitor() {
 		totalTweets = 0;
 		positiveWords = 0;
@@ -28,17 +34,21 @@ public class TreeVisitor implements TreeComponentVisitor {
 
 	}
 	
+	/**
+	 * Returns the total number of tweets in the newsfeed of all users.
+	 * Counts tweets among followers multiple times since those tweets are in multiple newsfeeds
+	 * @return total number of tweets
+	 */
 	public int getTotalTweets()
 	{
 		return totalTweets;
 	}
+
 	
-	public void reset()
-	{
-		totalTweets = 0;
-		positiveWords = 0;
-	}
-	
+	/**
+	 * Calculates the percentage of positive words divided by the total number of tweets
+	 * @return the percentage of words that are positive
+	 */
 	public double getPosPercent()
 	{
 		return ((double)positiveWords) / totalTweets * 100;
