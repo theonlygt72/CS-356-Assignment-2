@@ -37,9 +37,10 @@ public class AdminControlPanel extends JFrame {
 	 * Create the frame and initializes all components in the frame.
 	 */
 	private AdminControlPanel() {
-		this.setTitle("Admin Control Panel");
 		totalUsers = 0;
 		totalGroups = 0;
+		this.setTitle("Admin Control Panel");
+		
 		AdminControlPanel temp = this;
 		//code for JPanel
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,17 +75,24 @@ public class AdminControlPanel extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if(!userNameArea.getText().trim().equals(""))
 				{
-					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
-					DefaultMutableTreeNode newUser = new DefaultMutableTreeNode(new User(userNameArea.getText()));
-					//Can't add users to other users
-					if(selectedNode != null && (!(selectedNode.getUserObject() instanceof User) || selectedNode.getUserObject().toString().equals("Root")))
+					if(findUser(userNameArea.getText()) == null)
 					{
-						model.insertNodeInto(newUser, selectedNode, selectedNode.getChildCount());
-						userNameArea.setText(null);
-						totalUsers++;
+						DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
+						DefaultMutableTreeNode newUser = new DefaultMutableTreeNode(new User(userNameArea.getText()));
+						//Can't add users to other users
+						if(selectedNode != null && (!(selectedNode.getUserObject() instanceof User) || selectedNode.getUserObject().toString().equals("Root")))
+						{
+							model.insertNodeInto(newUser, selectedNode, selectedNode.getChildCount());
+							userNameArea.setText(null);
+							totalUsers++;
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Please select root or a Group");
+						}
 					}
-					else {
-						JOptionPane.showMessageDialog(null, "Please select a different node");
+					else
+					{
+						JOptionPane.showMessageDialog(null, "User already exists");
 					}
 				}
 				else
@@ -103,17 +111,28 @@ public class AdminControlPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(!groupNameArea.getText().trim().equals(""))
 				{
-					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
-					DefaultMutableTreeNode newUserGroup = new DefaultMutableTreeNode(new UserGroup(groupNameArea.getText()));
-					if(selectedNode != null)
+					if(findUserGroup(groupNameArea.getText()) == null)
 					{
-						model.insertNodeInto(newUserGroup, selectedNode, selectedNode.getChildCount());
-						groupNameArea.setText(null);
-						totalGroups++;
+						DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
+						DefaultMutableTreeNode newUserGroup = new DefaultMutableTreeNode(new UserGroup(groupNameArea.getText()));
+						if(selectedNode != null)
+						{
+							model.insertNodeInto(newUserGroup, selectedNode, selectedNode.getChildCount());
+							groupNameArea.setText(null);
+							totalGroups++;
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(null, "Please select root or a Group");
+						}
 					}
-					else {
-						JOptionPane.showMessageDialog(null, "Please enter in text");
+					else
+					{
+						JOptionPane.showMessageDialog(null, "Group already exists");
 					}
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "Please enter in text");
 				}
 			}
 		});
@@ -237,6 +256,25 @@ public class AdminControlPanel extends JFrame {
 		return null;
 	}
 	
+	public UserGroup findUserGroup(String groupID)
+	{
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeView.getModel().getRoot();
+		DefaultMutableTreeNode target = null;
+		for(Enumeration en = root.breadthFirstEnumeration(); en.hasMoreElements() && target == null;)
+		{
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) en.nextElement();
+			if(node.getUserObject() instanceof UserGroup)
+			{
+				UserGroup follow = (UserGroup) node.getUserObject();
+				if(follow.toString().equals(groupID))
+				{
+					return follow;
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns a static instance of AdminControlPanel.
 	 * @return a static instance of AdminControlPanel
@@ -245,4 +283,5 @@ public class AdminControlPanel extends JFrame {
 	{
 		return instance;
 	}
+
 }
