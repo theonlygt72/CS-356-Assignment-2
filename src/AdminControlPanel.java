@@ -74,17 +74,24 @@ public class AdminControlPanel extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if(!userNameArea.getText().trim().equals(""))
 				{
-					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
-					DefaultMutableTreeNode newUser = new DefaultMutableTreeNode(new User(userNameArea.getText()));
-					//Can't add users to other users
-					if(selectedNode != null && (!(selectedNode.getUserObject() instanceof User) || selectedNode.getUserObject().toString().equals("Root")))
+					if(findUser(userNameArea.getText()) == null)
+  					{
+						DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
+						DefaultMutableTreeNode newUser = new DefaultMutableTreeNode(new User(userNameArea.getText()));
+						//Can't add users to other users
+						if(selectedNode != null && (!(selectedNode.getUserObject() instanceof User) || selectedNode.getUserObject().toString().equals("Root")))
+						{
+							model.insertNodeInto(newUser, selectedNode, selectedNode.getChildCount());
+							userNameArea.setText(null);
+							totalUsers++;
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Please select a different node");
+						}
+  					}
+					else
 					{
-						model.insertNodeInto(newUser, selectedNode, selectedNode.getChildCount());
-						userNameArea.setText(null);
-						totalUsers++;
-					}
-					else {
-						JOptionPane.showMessageDialog(null, "Please select a different node");
+						JOptionPane.showMessageDialog(null, "User already exists");
 					}
 				}
 				else
@@ -103,17 +110,24 @@ public class AdminControlPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(!groupNameArea.getText().trim().equals(""))
 				{
-					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
-					DefaultMutableTreeNode newUserGroup = new DefaultMutableTreeNode(new UserGroup(groupNameArea.getText()));
-					if(selectedNode != null)
+					if(findUserGroup(groupNameArea.getText()) == null)
+  					{
+						DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) treeView.getLastSelectedPathComponent();
+						DefaultMutableTreeNode newUserGroup = new DefaultMutableTreeNode(new UserGroup(groupNameArea.getText()));
+						if(selectedNode != null)
+						{
+							model.insertNodeInto(newUserGroup, selectedNode, selectedNode.getChildCount());
+							groupNameArea.setText(null);
+							totalGroups++;
+						}
+  					}
+					else
 					{
-						model.insertNodeInto(newUserGroup, selectedNode, selectedNode.getChildCount());
-						groupNameArea.setText(null);
-						totalGroups++;
+						JOptionPane.showMessageDialog(null, "Group already exists");
 					}
-					else {
-						JOptionPane.showMessageDialog(null, "Please enter in text");
-					}
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "Please enter in text");
 				}
 			}
 		});
@@ -229,6 +243,25 @@ public class AdminControlPanel extends JFrame {
 			{
 				User follow = (User) node.getUserObject();
 				if(follow.toString().equals(userID))
+				{
+					return follow;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public UserGroup findUserGroup(String groupID)
+	{
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeView.getModel().getRoot();
+		DefaultMutableTreeNode target = null;
+		for(Enumeration en = root.breadthFirstEnumeration(); en.hasMoreElements() && target == null;)
+		{
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) en.nextElement();
+			if(node.getUserObject() instanceof UserGroup)
+			{
+				UserGroup follow = (UserGroup) node.getUserObject();
+				if(follow.toString().equals(groupID))
 				{
 					return follow;
 				}
