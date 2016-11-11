@@ -251,6 +251,11 @@ public class AdminControlPanel extends JFrame {
 		return null;
 	}
 	
+	/**
+	 * Looks for a unique UserGroup in the list of Users and UserGroups.
+	 * @param groupID id of the group being searched for
+	 * @return the group if it exists in the tree. Returns null if it doesn't exist in the tree
+	 */
 	public UserGroup findUserGroup(String groupID)
 	{
 		DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeView.getModel().getRoot();
